@@ -20,7 +20,6 @@ stop_words = stopwords.words('english')
 # Buat instance aplikasi web dengan Flask
 app = Flask(__name__)
 
-# menangani apabila file CSV yang akan dibaca tidak ditemukan
 try:
   data = pd.read_csv('twitter_data.csv')
 except FileNotFoundError:
@@ -60,14 +59,6 @@ def my_form_post():
     # Vader sentiment analysis
     sentiment_scores = vader_sentiment(processed_doc1)
     compound = round((1 + sentiment_scores['compound']) / 2, 2)
-    
-    # Analisis atau visualisasi tambahan berdasarkan kumpulan data
-    # hitung skor sentimen rata-rata untuk berbagai kategori:
-    if 'category' in data.columns:
-        category_sentiment = data.groupby('category')['compound'].mean()
-        average_sentiment = category_sentiment.mean()
-    else:
-        average_sentiment = None
 
     return render_template('form.html',
                            final=compound,
@@ -75,8 +66,7 @@ def my_form_post():
                            text2=sentiment_scores['pos'],
                            text5=sentiment_scores['neg'],
                            text4=compound,
-                           text3=sentiment_scores['neu'],
-                           average_sentiment=average_sentiment)
+                           text3=sentiment_scores['neu'],)
 
 if __name__ == "__main__":
     app.run(debug=True, host="127.0.0.1", port=5002, threaded=True)
