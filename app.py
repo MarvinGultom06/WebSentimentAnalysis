@@ -16,6 +16,7 @@ nltk.download('punkt')
 
 # Gunakan stopwords untuk menghilangkan kata-kata tidak berguna menggunakan inggris
 stop_words = stopwords.words('english')
+stop_words.remove('not')
 
 # Buat instance aplikasi web dengan Flask
 app = Flask(__name__)
@@ -30,7 +31,7 @@ except FileNotFoundError:
 def preprocess_text(text):
     # menghapus karakter selain huruf dan angka, dan membuang stopwords.
     text = text.lower()
-    text = re.sub(r'[^\w\s]', '', text)  # Remove non-alphanumeric characters
+    text = re.sub(r'[^\w\s]', '', text)  # Hapus karakter non-alfanumerik
     text = ' '.join([word for word in text.split() if word not in stop_words])
     return text
 
@@ -60,13 +61,17 @@ def my_form_post():
     sentiment_scores = vader_sentiment(processed_doc1)
     compound = round((1 + sentiment_scores['compound']) / 2, 2)
 
+    # Menghitung rata-rata populeritas dari teks
+    average_popularity = round((sentiment_scores['pos'] + sentiment_scores['neg'] + sentiment_scores['neu']) / 3, 2)
+
     return render_template('form.html',
                            final=compound,
                            text1=processed_doc1,
                            text2=sentiment_scores['pos'],
+                           text3=sentiment_scores['neu'],
                            text5=sentiment_scores['neg'],
                            text4=compound,
-                           text3=sentiment_scores['neu'],)
+                           average_popularity=average_popularity)
 
 if __name__ == "__main__":
     app.run(debug=True, host="127.0.0.1", port=5002, threaded=True)
