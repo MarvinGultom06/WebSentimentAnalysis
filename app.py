@@ -21,10 +21,10 @@ stop_words = set(stopwords.words("english"))
 app = Flask(__name__)
 
 try:
-  data = pd.read_csv('twitter_data.csv')
+    data = pd.read_csv('twitter_data.csv')
 except FileNotFoundError:
-  print("Error: CSV file not found.")
-  exit()
+    print("Error: CSV file not found.")
+    exit()
 
 # Fungsi untuk membersihkan teks
 def preprocess_text(text):
@@ -70,13 +70,13 @@ def my_form_post():
     average_popularity = round((sentiment_scores['pos'] + sentiment_scores['neg'] + sentiment_scores['neu']) / 3, 2)
 
     return render_template('form.html',
-                           final=compound,
-                           text1=processed_doc1,
-                           text2=sentiment_scores['pos'],
-                           text3=sentiment_scores['neu'],
-                           text5=sentiment_scores['neg'],
-                           text4=compound,
-                           average_popularity=average_popularity)
+                            final=compound,
+                            text1=processed_doc1,
+                            text2=sentiment_scores['pos'],
+                            text3=sentiment_scores['neu'],
+                            text5=sentiment_scores['neg'],
+                            text4=compound,
+                            average_popularity=average_popularity)
 
 if __name__ == "__main__":
     app.run(debug=True, host="127.0.0.1", port=5002, threaded=True)
