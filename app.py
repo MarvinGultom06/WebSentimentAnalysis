@@ -63,6 +63,18 @@ def index():
         average_neutral = None
         average_negative = None
         average_compound = None
+
+        # Input User
+        sentiment_scores = vader_sentiment(processed_doc1)
+        compound = round((1 + sentiment_scores['compound']) / 2, 2)
+        average_popularity = round((sentiment_scores['pos'] + sentiment_scores['neg'] + sentiment_scores['neu']) / 3, 2)
+
+        if sentiment_scores['pos'] > sentiment_scores['neg'] and sentiment_scores['pos'] > sentiment_scores['neu']:
+            final = "Positive"
+        elif sentiment_scores['neg'] > sentiment_scores['pos'] and sentiment_scores['neg'] > sentiment_scores['neu']:
+            final = "Negative"
+        else:
+            final = "Neutral"
         
         if file and allowed_file(file.filename):
             filename = file.filename
@@ -103,21 +115,10 @@ def index():
             except KeyError:
                 return f"Error: The specified column '{text_column}' does not exist in the uploaded CSV. Available columns: {df.columns.tolist()}"
         
-        # Input User
-        sentiment_scores = vader_sentiment(processed_doc1)
-        compound = round((1 + sentiment_scores['compound']) / 2, 2)
-        average_popularity = round((sentiment_scores['pos'] + sentiment_scores['neg'] + sentiment_scores['neu']) / 3, 2)
-
-        if sentiment_scores['pos'] > sentiment_scores['neg'] and sentiment_scores['pos'] > sentiment_scores['neu']:
-            final = "Positive"
-        elif sentiment_scores['neg'] > sentiment_scores['pos'] and sentiment_scores['neg'] > sentiment_scores['neu']:
-            final = "Negative"
-        else:
-            final = "Neutral"
-
+       
         return render_template('form.html',
                                title="Sentiment Analysis",
-                               text1=text1,
+                               text1=processed_doc1,
                                final=final,
                                text2=sentiment_scores['pos'],
                                text3=sentiment_scores['neu'],
